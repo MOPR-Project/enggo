@@ -1,0 +1,7 @@
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/btnWord"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
+    android:padding="10dp"
+    android:layout_margin="5dp"/>
