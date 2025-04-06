@@ -69,16 +69,17 @@
         android:padding="8dp" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewWords"
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/flexboxWordContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:padding="8dp"
+        app:flexWrap="wrap"
+        app:justifyContent="center"
         app:layout_constraintTop_toBottomOf="@id/selectedWordsLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:spanCount="3"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ImageButton
         android:id="@+id/btnSubmit"
@@ -86,7 +87,7 @@
         android:layout_height="54dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/ic_submit"
-        app:layout_constraintTop_toBottomOf="@id/recyclerViewWords"
+        app:layout_constraintTop_toBottomOf="@id/flexboxWordContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="8dp"/>

@@ -17,6 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EngGo"
         tools:targetApi="31">
+        <activity android:name=".activities.CongratulationsActivity" />
+
         <activity
             android:name=".MainActivity"
             android:exported="false" />
