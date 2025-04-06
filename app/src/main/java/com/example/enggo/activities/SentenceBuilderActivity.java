@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -18,6 +19,7 @@ import com.example.enggo.data.SentenceSubmitRequest;
 import com.example.enggo.helpers.RetrofitClient;
 import com.example.enggo.models.Sentence;
 import com.example.enggo.service.SentenceApiService;
+import com.google.android.flexbox.FlexboxLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SentenceBuilderActivity extends AppCompatActivity {
+    private ProgressBar progressBar;
     private RecyclerView recyclerViewWords;
     private WordAdapter wordAdapter;
 
@@ -35,7 +38,7 @@ public class SentenceBuilderActivity extends AppCompatActivity {
     private int currentIndex = 0;
 
     private List<String> wordList = new ArrayList<>();
-    private LinearLayout selectedWordsLayout;
+    private FlexboxLayout selectedWordsLayout;
     private List<String> selectedWords = new ArrayList<>();
     private SentenceApiService apiService;
     private ImageButton btnSubmit; // Nút Submit
@@ -48,6 +51,8 @@ public class SentenceBuilderActivity extends AppCompatActivity {
         recyclerViewWords = findViewById(R.id.recyclerViewWords);
         selectedWordsLayout = findViewById(R.id.selectedWordsLayout);
         btnSubmit = findViewById(R.id.btnSubmit);
+        progressBar = findViewById(R.id.progressBar);
+
 
         apiService = RetrofitClient.getInstance().create(SentenceApiService.class);
 
@@ -61,6 +66,7 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<SentenceResponse> call, Response<SentenceResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    progressBar.setMax(sentenceList.size());
                     sentenceList = response.body().getSentences();
                     if (!sentenceList.isEmpty()) {
                         showNextSentence();
@@ -80,6 +86,9 @@ public class SentenceBuilderActivity extends AppCompatActivity {
     private void showNextSentence() {
         if (currentIndex < sentenceList.size()) {
             Sentence currentSentence = sentenceList.get(currentIndex);
+
+            progressBar.setProgress(currentIndex);
+
             wordList.clear();
             wordList.addAll(currentSentence.getWords());
             Collections.shuffle(wordList);
@@ -106,49 +115,73 @@ public class SentenceBuilderActivity extends AppCompatActivity {
 
     private void updateSelectedWordsUI() {
         selectedWordsLayout.removeAllViews();
+
         for (String word : selectedWords) {
             Button wordButton = new Button(this);
             wordButton.setText(word);
+
+            // Style button
+            wordButton.setTextSize(16);
+            wordButton.setTextColor(getResources().getColor(android.R.color.black));
+            wordButton.setBackgroundResource(R.drawable.word_button_bg); // custom drawable background
+            wordButton.setPadding(30, 16, 30, 16);
+
+
+            wordButton.setAllCaps(false);
+            wordButton.setElevation(0);
+
+            // Margin giữa các nút
+            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                    FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                    FlexboxLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(12, 16, 12, 16);
+            wordButton.setLayoutParams(params);
+
+            // Xoá từ khi bấm
             wordButton.setOnClickListener(v -> {
                 selectedWords.remove(word);
                 updateSelectedWordsUI();
             });
+
             selectedWordsLayout.addView(wordButton);
         }
     }
+
 
     private void submitSentence() {
         if (currentIndex >= sentenceList.size()) return;
 
         Sentence currentSentence = sentenceList.get(currentIndex);
 
-        // Kiểm tra xem người dùng đã chọn từ hay chưa
         if (selectedWords.isEmpty()) {
             Toast.makeText(this, "Please select words", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Tạo request body
-        SentenceSubmitRequest request = new SentenceSubmitRequest(currentSentence.getId(), selectedWords);
+        // compare to correctWords
+        List<String> correctWords = currentSentence.getWords();
+        if (selectedWords.equals(correctWords)) {
+            Toast.makeText(this, "✅ Correct!", Toast.LENGTH_SHORT).show();
 
-        // Gửi request
-        apiService.submitSentence(request).enqueue(new Callback<ApiResponse>() {
-            @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(SentenceBuilderActivity.this, "Correct!", Toast.LENGTH_SHORT).show();
-                    currentIndex++; // Chuyển sang câu tiếp theo
-                    showNextSentence();
-                } else {
-                    Toast.makeText(SentenceBuilderActivity.this, "Try again!", Toast.LENGTH_SHORT).show();
+            SentenceSubmitRequest request = new SentenceSubmitRequest(currentSentence.getId(), selectedWords);
+            apiService.submitSentence(request).enqueue(new Callback<ApiResponse>() {
+                @Override
+                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Log.e("API_ERROR", "Failed to submit sentence", t);
-                Toast.makeText(SentenceBuilderActivity.this, "Submission failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<ApiResponse> call, Throwable t) {
+                    Log.e("API_ERROR", "Failed to submit sentence", t);
+                }
+            });
+
+            currentIndex++;
+            selectedWords.clear();
+            showNextSentence();
+        } else {
+            Toast.makeText(this, "❌ Incorrect! Try again.", Toast.LENGTH_SHORT).show();
+        }
     }
+
 }

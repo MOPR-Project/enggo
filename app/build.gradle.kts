@@ -43,6 +43,7 @@ android {
 
 dependencies {
 
+    implementation (libs.flexbox)
     implementation (libs.retrofit)
     implementation (libs.converter.gson)
 
