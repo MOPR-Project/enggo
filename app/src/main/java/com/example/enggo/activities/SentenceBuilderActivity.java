@@ -66,9 +66,9 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<SentenceResponse> call, Response<SentenceResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    progressBar.setMax(sentenceList.size());
                     sentenceList = response.body().getSentences();
                     if (!sentenceList.isEmpty()) {
+                        progressBar.setMax(sentenceList.size());
                         showNextSentence();
                     }
                 } else {
@@ -93,7 +93,7 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             wordList.addAll(currentSentence.getWords());
             Collections.shuffle(wordList);
 
-            selectedWords.clear(); // Reset danh sách từ đã chọn
+            selectedWords.clear();
             updateSelectedWordsUI();
 
             setupRecyclerView();
