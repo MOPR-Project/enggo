@@ -14,4 +14,3 @@ public class SentenceSubmitRequest {
     public Long getSentenceId() { return sentenceId; }
     public List<String> getUserWords() { return userWords; }
 }
-

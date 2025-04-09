@@ -216,5 +216,4 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             Toast.makeText(this, "❌ Incorrect! Try again.", Toast.LENGTH_SHORT).show();
         }
     }
-
 }
