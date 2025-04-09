@@ -25,7 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.enggo.R;
 
-public class SignupActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     private TextView textViewLogin;
     private TextView textViewTermsAndPrivacy;
 
@@ -33,7 +33,7 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_register);
 
         mapping();
         setupTextViewLogin();
@@ -75,7 +75,7 @@ public class SignupActivity extends AppCompatActivity {
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
 
             @Override
@@ -107,7 +107,7 @@ public class SignupActivity extends AppCompatActivity {
         ClickableSpan clickableSpanTerms = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
 
             @Override
@@ -121,7 +121,7 @@ public class SignupActivity extends AppCompatActivity {
         ClickableSpan clickableSpanPrivacy = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
 
             @Override
