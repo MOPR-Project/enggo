@@ -18,4 +18,3 @@ public interface SentenceApiService {
     Call<ApiResponse> submitSentence(@Body SentenceSubmitRequest request);
 
 }
-
