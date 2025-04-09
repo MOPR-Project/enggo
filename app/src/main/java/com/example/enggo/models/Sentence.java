@@ -25,4 +25,3 @@ public class Sentence {
         return words;
     }
 }
-
