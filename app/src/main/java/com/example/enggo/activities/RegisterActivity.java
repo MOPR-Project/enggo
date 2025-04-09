@@ -90,6 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         textViewLogin.setText(spannable);
         textViewLogin.setMovementMethod(LinkMovementMethod.getInstance());
+        textViewLogin.setHighlightColor(Color.TRANSPARENT);
     }
 
     private void setupTextViewTermsAndPrivacy()
@@ -137,6 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         textViewTermsAndPrivacy.setText(spannable);
         textViewTermsAndPrivacy.setMovementMethod(LinkMovementMethod.getInstance());
+        textViewTermsAndPrivacy.setHighlightColor(Color.TRANSPARENT);
     }
 
     public void hideKeyboard(View view) {
