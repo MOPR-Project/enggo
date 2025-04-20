@@ -1,8 +1,9 @@
 package com.example.enggo.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Meaning {
+public class Meaning implements Serializable {
     public String partOfSpeech;
     public List<Definition> definitions;
 

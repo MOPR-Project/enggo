@@ -3,9 +3,10 @@ package com.example.enggo.data;
 import com.example.enggo.models.Meaning;
 import com.example.enggo.models.Phonetic;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class WordResponse {
+public class WordResponse implements Serializable {
     public String word;
     public String phonetic;
     public List<Phonetic> phonetics;

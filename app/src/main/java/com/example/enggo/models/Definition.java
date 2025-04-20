@@ -1,6 +1,8 @@
 package com.example.enggo.models;
 
-public class Definition {
+import java.io.Serializable;
+
+public class Definition implements Serializable {
     public String definition;
     public String example;
 

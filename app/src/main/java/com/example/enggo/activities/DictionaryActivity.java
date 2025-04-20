@@ -1,6 +1,7 @@
 package com.example.enggo.activities;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.example.enggo.service.WordApiService;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -66,9 +68,8 @@ public class DictionaryActivity extends AppCompatActivity {
 
                     //word
                     displayWord = result.word;
-
                     //phonetic
-                    String phonetic = result.phonetic != null
+                    phonetic = result.phonetic != null
                             ? result.phonetic
                             : (result.phonetics != null && !result.phonetics.isEmpty() ? result.phonetics.get(0).text : "");
                     //audioUrl
@@ -86,14 +87,21 @@ public class DictionaryActivity extends AppCompatActivity {
                     Definition definition = meaning.definitions.get(0);
 
 
-
                     Gson gson = new Gson();
                     Log.d("DictionaryData", "Word: " + displayWord);
                     Log.d("DictionaryData", "Phonetic: " + phonetic);
                     Log.d("DictionaryData", "Meaning: " + gson.toJson(meaning));
                     Log.d("DictionaryData", "Definition: " + gson.toJson(definition));
 
-                    showAllMeanings(displayWord, phonetic, result.meanings);
+                    //WordDetailActivity
+                    Intent intent = new Intent(DictionaryActivity.this, WordDetailActivity.class);
+                    intent.putExtra("word", displayWord);
+                    intent.putExtra("phonetic", phonetic);
+                    intent.putExtra("audioUrl", audioUrl);
+                    intent.putExtra("meanings", new ArrayList<>(result.meanings));
+                    startActivity(intent);
+
+
                 } else {
                     Toast.makeText(DictionaryActivity.this, "Không tìm thấy từ!", Toast.LENGTH_SHORT).show();
                 }
@@ -147,9 +155,5 @@ public class DictionaryActivity extends AppCompatActivity {
         }
 
     }
-
-
-
-
 }
 

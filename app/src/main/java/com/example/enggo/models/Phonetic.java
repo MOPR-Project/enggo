@@ -1,6 +1,8 @@
 package com.example.enggo.models;
 
-public class Phonetic {
+import java.io.Serializable;
+
+public class Phonetic implements Serializable {
     public String text;
     public String audio;
 

@@ -23,7 +23,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ANH VIỆT"
+                android:text="ANH ANH"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:paddingHorizontal="16dp" />
@@ -31,14 +31,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ANH ANH"
-                android:textColor="#FFFFFF"
-                android:paddingHorizontal="16dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="CHUYÊN NGÀNH"
+                android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:paddingHorizontal="16dp" />
 
@@ -46,6 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ĐỒNG NGHĨA"
+                android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:paddingHorizontal="16dp" />
 
@@ -53,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="HÌNH ẢNH"
+                android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:paddingHorizontal="16dp" />
         </LinearLayout>
@@ -78,9 +74,9 @@
                 android:text="general"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="#222222" />
+                android:textColor="#495057" />
 
-            <!-- Phiên âm + Nút nghe audio -->
+            <!-- Phonetic -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,13 +96,13 @@
                     android:id="@+id/btnPlayAudio"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="16dp"
                     android:src="@drawable/ic_sound"
                     android:contentDescription="Nghe phát âm" />
 
             </LinearLayout>
 
-            <!-- TAGS loại từ (danh từ, tính từ...) -->
+            <!-- TAGS -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -117,29 +113,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <!-- Mỗi tag sẽ được add programmatically hoặc có sẵn như sau -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="danh từ"
-                        android:padding="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/tag_background"
-                        android:textColor="#1976D2" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="tính từ"
-                        android:padding="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/tag_background"
-                        android:textColor="#1976D2" />
                 </LinearLayout>
             </HorizontalScrollView>
 
-            <!-- Tiêu đề nghĩa -->
+            <!-- Meaning -->
             <TextView
                 android:id="@+id/tvMeaningsLabel"
                 android:layout_width="wrap_content"
@@ -150,7 +127,7 @@
                 android:layout_marginTop="16dp"
                 android:textColor="#000000" />
 
-            <!-- Container hiển thị danh sách nghĩa -->
+            <!-- All meaning -->
             <LinearLayout
                 android:id="@+id/meaningsContainer"
                 android:layout_width="match_parent"
