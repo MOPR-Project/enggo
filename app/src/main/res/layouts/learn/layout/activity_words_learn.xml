@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#121212"
+    tools:context=".activities.WordLearnActivity">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/tvLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="A1 Level"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Reset Progress -->
+    <TextView
+        android:id="@+id/tvResetProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⟳ Reset all progress"
+        android:textColor="#FF4B4B"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Progress Summary -->
+    <TextView
+        android:id="@+id/tvProgressSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="20 new words left • 80% complete"
+        android:textColor="#AAAAAA"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Word List -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/wordListContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+</LinearLayout>
