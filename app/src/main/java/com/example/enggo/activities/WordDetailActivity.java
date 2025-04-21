@@ -3,6 +3,8 @@ package com.example.enggo.activities;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -121,11 +123,20 @@ public class WordDetailActivity extends AppCompatActivity {
             MediaPlayer mediaPlayer = new MediaPlayer();
             try {
                 mediaPlayer.setDataSource(audioUrl);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
+                mediaPlayer.setOnPreparedListener(mp -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        PlaybackParams params = new PlaybackParams();
+                        params.setSpeed(0.75f); // 80% tốc độ bình thường
+                        mp.setPlaybackParams(params);
+                    }
+                    mp.start();
+                });
+                mediaPlayer.prepareAsync();
             } catch (IOException e) {
                 Toast.makeText(this, "Không thể phát âm thanh", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         }
     }
+
 }

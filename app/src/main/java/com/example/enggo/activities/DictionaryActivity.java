@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -12,6 +13,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.enggo.R;
 import com.example.enggo.data.WordResponse;
+import com.example.enggo.helpers.WordHistoryManager;
 import com.example.enggo.helpers.WordRetrofitClient;
 import com.example.enggo.models.Definition;
 import com.example.enggo.models.Meaning;
@@ -30,6 +32,8 @@ import retrofit2.Response;
 public class DictionaryActivity extends AppCompatActivity {
     private WordApiService wordApiService;
     private EditText edtSearch;
+    Button btnHistory;
+
 
     private String displayWord;
     private String phonetic;
@@ -44,9 +48,9 @@ public class DictionaryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dictionary);
 
         edtSearch = findViewById(R.id.edtSearch);
-        wordApiService = WordRetrofitClient.getInstance().create(WordApiService.class);
+        btnHistory = findViewById(R.id.btnHistory);
 
-
+        btnHistory.setOnClickListener(v -> showHistoryDialog());
         edtSearch.setOnEditorActionListener((v, actionId, event) -> {
             String word = v.getText().toString().trim();
             if (!word.isEmpty()) {
@@ -54,6 +58,8 @@ public class DictionaryActivity extends AppCompatActivity {
             }
             return true;
         });
+
+        wordApiService = WordRetrofitClient.getInstance().create(WordApiService.class);
     }
 
 
@@ -87,20 +93,24 @@ public class DictionaryActivity extends AppCompatActivity {
                     Definition definition = meaning.definitions.get(0);
 
 
-                    Gson gson = new Gson();
-                    Log.d("DictionaryData", "Word: " + displayWord);
-                    Log.d("DictionaryData", "Phonetic: " + phonetic);
-                    Log.d("DictionaryData", "Meaning: " + gson.toJson(meaning));
-                    Log.d("DictionaryData", "Definition: " + gson.toJson(definition));
+                    // Gson gson = new Gson();
+                    // Log.d("DictionaryData", "Word: " + displayWord);
+                    // Log.d("DictionaryData", "Phonetic: " + phonetic);
+                    // Log.d("DictionaryData", "Meaning: " + gson.toJson(meaning));
+                    // Log.d("DictionaryData", "Definition: " + gson.toJson(definition));
 
-                    //WordDetailActivity
+
+                    // Shared Referrence
+                    WordHistoryManager.addWord(DictionaryActivity.this, displayWord);
+
+
+                    //Open WordDetailActivity
                     Intent intent = new Intent(DictionaryActivity.this, WordDetailActivity.class);
                     intent.putExtra("word", displayWord);
                     intent.putExtra("phonetic", phonetic);
                     intent.putExtra("audioUrl", audioUrl);
                     intent.putExtra("meanings", new ArrayList<>(result.meanings));
                     startActivity(intent);
-
 
                 } else {
                     Toast.makeText(DictionaryActivity.this, "Không tìm thấy từ!", Toast.LENGTH_SHORT).show();
@@ -112,6 +122,28 @@ public class DictionaryActivity extends AppCompatActivity {
                 Toast.makeText(DictionaryActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void showHistoryDialog() {
+        List<String> historyList = WordHistoryManager.getWordHistory(this);
+        if (historyList.isEmpty()) {
+            Toast.makeText(this, "Chưa có từ nào được tra.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] historyArray = historyList.toArray(new String[0]);
+        new AlertDialog.Builder(this)
+                .setTitle("Từ đã tra")
+                .setItems(historyArray, (dialog, which) -> {
+                    String selectedWord = historyArray[which];
+                    edtSearch.setText(selectedWord);
+                    fetchWordData(selectedWord);
+                })
+                .setNegativeButton("Đóng", null)
+                .setPositiveButton("Xoá lịch sử", (dialog, which) -> {
+                    WordHistoryManager.clearWordHistory(this);
+                    Toast.makeText(this, "Đã xoá lịch sử", Toast.LENGTH_SHORT).show();
+                })
+                .show();
     }
 
     private void showAllMeanings(String word, String phonetic, List<Meaning> meanings) {
