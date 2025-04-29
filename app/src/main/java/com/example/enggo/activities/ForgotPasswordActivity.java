@@ -80,7 +80,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         SpannableString spannable = new SpannableString(fullText);
 
         spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#828282")),
-                0, 20, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                0, 22, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new StyleSpan(Typeface.BOLD),
                 22, fullText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -98,7 +98,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         };
 
-        spannable.setSpan(clickableSpan, 17, fullText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(clickableSpan, 22, fullText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         textViewLogin.setText(spannable);
         textViewLogin.setMovementMethod(LinkMovementMethod.getInstance());
