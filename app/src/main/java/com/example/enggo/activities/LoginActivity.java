@@ -20,6 +20,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.enggo.MainActivity;
 import com.example.enggo.R;
 import com.example.enggo.data.LoginRequest;
 import com.example.enggo.data.LoginResponse;
@@ -132,15 +133,15 @@ public class LoginActivity extends AppCompatActivity {
                         if (response.isSuccessful())
                         {
                             Toast.makeText(LoginActivity.this, "Đăng nhập thành công.", Toast.LENGTH_SHORT).show();
-
                             User user = response.body().getUser();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         }
                         else {
                             String errorMessage = "Đăng nhập thất bại!";
                             try {
                                 if (response.errorBody() != null) {
                                     JSONObject errorObj = new JSONObject(response.errorBody().string());
-                                    errorMessage = "Đăng nhập thất bại: " + errorObj.optString("message", errorMessage);
+                                    errorMessage = "Đăng nhập thất bại! " + errorObj.optString("message");
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -151,7 +152,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
                         Toast.makeText(LoginActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e("LoginError", "Đăng nhập thất bại: " + t.getMessage());
                     }
                 });
             }
