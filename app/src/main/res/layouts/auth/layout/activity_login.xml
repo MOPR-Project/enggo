@@ -28,16 +28,17 @@
         android:layout_marginHorizontal="40dp">
 
         <EditText
+            android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="enggo@gmail.com"
+            android:hint="Tài khoản"
             android:textSize="14sp"
             android:padding="12dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/edit_text_background"
-            android:inputType="textEmailAddress" />
+            android:background="@drawable/edit_text_background"/>
 
         <EditText
+            android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Mật khẩu"
@@ -48,6 +49,7 @@
             android:background="@drawable/edit_text_background" />
 
         <Button
+            android:id="@+id/buttonLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button_ripple_0"

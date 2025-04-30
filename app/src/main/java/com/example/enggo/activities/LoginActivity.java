@@ -4,11 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +21,27 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.enggo.R;
+import com.example.enggo.data.LoginRequest;
+import com.example.enggo.data.LoginResponse;
+import com.example.enggo.helpers.RetrofitClient;
+import com.example.enggo.models.User;
+import com.example.enggo.service.UserApiService;
+
+import org.json.JSONObject;
+
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
+    private EditText editTextUsername;
+    private EditText editTextPassword;
+    private Button buttonLogin;
     private TextView textViewRegister;
     private TextView textViewForgotPassword;
+    private UserApiService userApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +54,12 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        userApiService = RetrofitClient.getInstance().create(UserApiService.class);
+
         mapping();
         setUpTextViewRegister();
         setUpTextViewForgotPassword();
+        setUpButtonLogin();
     }
 
     @Override
@@ -65,6 +89,9 @@ public class LoginActivity extends AppCompatActivity {
     {
         textViewRegister = findViewById(R.id.textViewRegister);
         textViewForgotPassword = findViewById(R.id.textViewForgotPassword);
+        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextPassword = findViewById(R.id.editTextPassword);
+        buttonLogin = findViewById(R.id.buttonLogin);
     }
 
     private void setUpTextViewRegister()
@@ -78,6 +105,56 @@ public class LoginActivity extends AppCompatActivity {
     {
         textViewForgotPassword.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+        });
+    }
+
+    private void setUpButtonLogin()
+    {
+        buttonLogin.setOnClickListener(v -> {
+            String username = editTextUsername.getText().toString().trim();
+            String password = editTextPassword.getText().toString().trim();
+
+            if (TextUtils.isEmpty(username))
+            {
+                editTextUsername.setError("Chưa nhập tài khoản!");
+            }
+            else if (TextUtils.isEmpty(password))
+            {
+                editTextPassword.setError("Chưa nhập mật khẩu!");
+            }
+            else
+            {
+                LoginRequest loginRequest = new LoginRequest(username, password);
+                Call<LoginResponse> call = userApiService.loginUser(loginRequest);
+                call.enqueue(new Callback<LoginResponse>() {
+                    @Override
+                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                        if (response.isSuccessful())
+                        {
+                            Toast.makeText(LoginActivity.this, "Đăng nhập thành công.", Toast.LENGTH_SHORT).show();
+
+                            User user = response.body().getUser();
+                        }
+                        else {
+                            String errorMessage = "Đăng nhập thất bại!";
+                            try {
+                                if (response.errorBody() != null) {
+                                    JSONObject errorObj = new JSONObject(response.errorBody().string());
+                                    errorMessage = "Đăng nhập thất bại: " + errorObj.optString("message", errorMessage);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_SHORT).show();                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<LoginResponse> call, Throwable t) {
+                        Toast.makeText(LoginActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("LoginError", "Đăng nhập thất bại: " + t.getMessage());
+                    }
+                });
+            }
         });
     }
 }

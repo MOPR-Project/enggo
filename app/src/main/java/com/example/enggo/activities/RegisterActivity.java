@@ -9,15 +9,20 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -27,10 +32,33 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.enggo.R;
+import com.example.enggo.data.ApiResponse;
+import com.example.enggo.data.RegisterRequest;
+import com.example.enggo.data.VerifyRegisterRequest;
+import com.example.enggo.helpers.RetrofitClient;
+import com.example.enggo.models.User;
+import com.example.enggo.service.UserApiService;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
     private TextView textViewLogin;
     private TextView textViewTermsAndPrivacy;
+    private Button buttonRegister;
+    private EditText editTextUsername;
+    private EditText editTextPassword;
+    private EditText editTextRePassword;
+    private EditText editTextOtp;
+    private Button buttonSendOtp;
+    private EditText editTextEmail;
+    private UserApiService userApiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +70,8 @@ public class RegisterActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        userApiService = RetrofitClient.getInstance().create(UserApiService.class);
 
         mapping();
         setupTextViewLogin();
@@ -75,6 +105,13 @@ public class RegisterActivity extends AppCompatActivity {
     {
         textViewLogin = findViewById(R.id.textViewLogin);
         textViewTermsAndPrivacy = findViewById(R.id.textViewTermsAndPrivacy);
+        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextPassword = findViewById(R.id.editTextPassword);
+        editTextRePassword = findViewById(R.id.editTextRePassword);
+        editTextOtp = findViewById(R.id.editTextOtp);
+        buttonRegister = findViewById(R.id.buttonRegister);
+        buttonSendOtp = findViewById(R.id.buttonSendOtp);
+        editTextEmail = findViewById(R.id.editTextEmail);
     }
 
     private void setupTextViewLogin()
@@ -83,7 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
         SpannableString spannable = new SpannableString(fullText);
 
         spannable.setSpan(new ForegroundColorSpan(Color.parseColor("#828282")),
-                0, 15, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                0, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new StyleSpan(Typeface.BOLD),
                 17, fullText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -106,6 +143,8 @@ public class RegisterActivity extends AppCompatActivity {
         textViewLogin.setText(spannable);
         textViewLogin.setMovementMethod(LinkMovementMethod.getInstance());
         textViewLogin.setHighlightColor(Color.TRANSPARENT);
+        setUpButtonRegister();
+        setUpButtonSendOtp();
     }
 
     private void setupTextViewTermsAndPrivacy()
@@ -154,5 +193,159 @@ public class RegisterActivity extends AppCompatActivity {
         textViewTermsAndPrivacy.setText(spannable);
         textViewTermsAndPrivacy.setMovementMethod(LinkMovementMethod.getInstance());
         textViewTermsAndPrivacy.setHighlightColor(Color.TRANSPARENT);
+    }
+
+    private void setUpButtonRegister()
+    {
+        buttonRegister.setOnClickListener(v -> {
+            String username = editTextUsername.getText().toString().trim();
+            String password = editTextPassword.getText().toString().trim();
+            String rePassword = editTextRePassword.getText().toString().trim();
+            String email = editTextEmail.getText().toString().trim();
+            String otp = editTextOtp.getText().toString().trim();
+
+            if (TextUtils.isEmpty(username)) {
+                editTextUsername.setError("Chưa nhập tài khoản!");
+            }
+            else if (username.length() < 8) {
+                editTextUsername.setError("Tài khoản phải có ít nhất 8 ký tự!");
+            }
+            else if (TextUtils.isEmpty(password)) {
+                editTextPassword.setError("Chưa nhập mật khẩu!");
+            }
+            else if (password.length() < 6) {
+                editTextPassword.setError("Mật khẩu phải có ít nhất 8 ký tự!");
+            }
+            else if (!password.equals(rePassword)) {
+                editTextRePassword.setError("Mật khẩu nhập lại không khớp!");
+            }
+            else if (TextUtils.isEmpty(email)) {
+                editTextEmail.setError("Chưa nhập Email!");
+            }
+            else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                editTextEmail.setError("Email không đúng định dạng!");
+            }
+            else if (editTextOtp.getVisibility() != View.VISIBLE)
+            {
+                editTextUsername.setEnabled(false);
+                editTextRePassword.setEnabled(false);
+                editTextEmail.setEnabled(false);
+                editTextPassword.setEnabled(false);
+                editTextOtp.setVisibility(View.VISIBLE);
+                buttonSendOtp.setVisibility(View.VISIBLE);
+
+                RegisterRequest registerRequest = new RegisterRequest(username, password, email);
+                Call<ApiResponse> call = userApiService.registerUser(registerRequest);
+                call.enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this, "Đăng ký thành công. Otp đã gửi đến Email của bạn.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String errorMessage = "Đăng ký thất bại!";
+                            try {
+                                if (response.errorBody() != null) {
+                                    JSONObject errorObj = new JSONObject(response.errorBody().string());
+                                    errorMessage = "Đăng ký thất bại: " + errorObj.optString("message", errorMessage);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            // Hiển thị thông báo lỗi cho người dùng
+                            Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<ApiResponse> call, Throwable t) {
+                        Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("LoginError", "Đăng ký thất bại: " + t.getMessage());
+                    }
+                });
+            }
+            else
+            {
+                if (TextUtils.isEmpty(otp))
+                {
+                    editTextOtp.setError("Chưa nhập Otp!");
+                }
+                else
+                {
+                    VerifyRegisterRequest verifyRegisterRequest = new VerifyRegisterRequest(username, email, password, otp);
+                    Call<ApiResponse> call = userApiService.verifyRegister(verifyRegisterRequest);
+                    call.enqueue(new Callback<ApiResponse>() {
+                        @Override
+                        public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(RegisterActivity.this, "Đăng ký thành công.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                String errorMessage = "Đăng ký thất bại!";
+                                try {
+                                    if (response.errorBody() != null) {
+                                        JSONObject errorObj = new JSONObject(response.errorBody().string());
+                                        errorMessage = "Đăng ký thất bại: " + errorObj.optString("message", errorMessage);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+
+                        @Override
+                        public void onFailure(Call<ApiResponse> call, Throwable t) {
+                            Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void setUpButtonSendOtp()
+    {
+        buttonSendOtp.setOnClickListener(v -> {
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("email", editTextEmail.getText().toString().trim());
+
+            userApiService.sendOtp(requestBody).enqueue(new Callback<Map<String, Object>>() {
+                @Override
+                public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                    if (response.isSuccessful()) {
+                        Map<String, Object> body = response.body();
+                        if (body != null && "success".equals(body.get("status"))) {
+                            Toast.makeText(RegisterActivity.this, "OTP đã gửi thành công.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String message = "Gửi OTP thất bại!";
+                            if (body != null && body.get("message") != null) {
+                                message = String.valueOf(body.get("message"));
+                            }
+                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        String errorMessage = "Lỗi gửi OTP!";
+                        try {
+                            if (response.errorBody() != null) {
+                                JSONObject errorObj = new JSONObject(response.errorBody().string());
+                                errorMessage = "Lỗi gửi OTP: " + errorObj.optString("message", errorMessage);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+                @Override
+                public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                    Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 }
