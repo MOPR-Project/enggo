@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.enggo.R;
+import com.example.enggo.helpers.WordStorageManager;
 import com.example.enggo.models.Definition;
 import com.example.enggo.models.Meaning;
 import com.google.gson.Gson;
@@ -31,7 +32,7 @@ import java.util.Set;
 public class WordDetailActivity extends AppCompatActivity {
 
     private TextView tvWord, tvPhonetic;
-    private ImageView btnPlayAudio;
+    private ImageView btnPlayAudio, imgFavorite;
     private LinearLayout tagContainer, meaningsContainer;
 
     @Override
@@ -40,6 +41,7 @@ public class WordDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_word_detail);
 
         tvWord = findViewById(R.id.tvWord);
+        imgFavorite = findViewById(R.id.imgFavorite);
         tvPhonetic = findViewById(R.id.tvPhonetic);
         btnPlayAudio = findViewById(R.id.btnPlayAudio);
         tagContainer = findViewById(R.id.tagContainer);
@@ -58,6 +60,7 @@ public class WordDetailActivity extends AppCompatActivity {
         renderMeanings(meanings);
 
         btnPlayAudio.setOnClickListener(v -> playAudio(audioUrl));
+        imgFavorite.setOnClickListener(v -> WordStorageManager.addWordToFavorite(WordDetailActivity.this, word));
     }
 
     private void renderTags(List<Meaning> meanings) {

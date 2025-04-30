@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -13,13 +12,12 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.enggo.R;
 import com.example.enggo.data.WordResponse;
-import com.example.enggo.helpers.WordHistoryManager;
+import com.example.enggo.helpers.WordStorageManager;
 import com.example.enggo.helpers.WordRetrofitClient;
 import com.example.enggo.models.Definition;
 import com.example.enggo.models.Meaning;
 import com.example.enggo.models.Phonetic;
 import com.example.enggo.service.WordApiService;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +31,7 @@ public class DictionaryActivity extends AppCompatActivity {
     private WordApiService wordApiService;
     private EditText edtSearch;
     Button btnHistory;
-
+    Button btnFavorite;
 
     private String displayWord;
     private String phonetic;
@@ -49,8 +47,12 @@ public class DictionaryActivity extends AppCompatActivity {
 
         edtSearch = findViewById(R.id.edtSearch);
         btnHistory = findViewById(R.id.btnHistory);
+        btnFavorite = findViewById(R.id.btnFavorite);
 
         btnHistory.setOnClickListener(v -> showHistoryDialog());
+        btnFavorite.setOnClickListener(v -> showFavoriteWords());
+
+
         edtSearch.setOnEditorActionListener((v, actionId, event) -> {
             String word = v.getText().toString().trim();
             if (!word.isEmpty()) {
@@ -101,7 +103,7 @@ public class DictionaryActivity extends AppCompatActivity {
 
 
                     // Shared Referrence
-                    WordHistoryManager.addWord(DictionaryActivity.this, displayWord);
+                    WordStorageManager.addWord(DictionaryActivity.this, displayWord);
 
 
                     //Open WordDetailActivity
@@ -124,7 +126,7 @@ public class DictionaryActivity extends AppCompatActivity {
         });
     }
     private void showHistoryDialog() {
-        List<String> historyList = WordHistoryManager.getWordHistory(this);
+        List<String> historyList = WordStorageManager.getWordHistory(this);
         if (historyList.isEmpty()) {
             Toast.makeText(this, "Chưa có từ nào được tra.", Toast.LENGTH_SHORT).show();
             return;
@@ -140,10 +142,15 @@ public class DictionaryActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Đóng", null)
                 .setPositiveButton("Xoá lịch sử", (dialog, which) -> {
-                    WordHistoryManager.clearWordHistory(this);
+                    WordStorageManager.clearWordHistory(this);
                     Toast.makeText(this, "Đã xoá lịch sử", Toast.LENGTH_SHORT).show();
                 })
                 .show();
+    }
+
+    private void showFavoriteWords() {
+        Intent intent = new Intent(DictionaryActivity.this, FavoriteWordActivity.class);
+        startActivity(intent);
     }
 
     private void showAllMeanings(String word, String phonetic, List<Meaning> meanings) {

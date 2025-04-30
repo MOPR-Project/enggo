@@ -66,15 +66,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Từ vựng -->
-            <TextView
-                android:id="@+id/tvWord"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="general"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:textColor="#495057" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <!-- Từ vựng -->
+                <TextView
+                    android:id="@+id/tvWord"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="general"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:layout_weight="1"
+                    android:textColor="#495057" />
+
+                <ImageView
+                    android:id="@+id/imgFavorite"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_star_outline"
+                    android:contentDescription="Favorite" />
+
+            </LinearLayout>
 
             <!-- Phonetic -->
             <LinearLayout
