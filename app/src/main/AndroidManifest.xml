@@ -19,10 +19,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
@@ -31,18 +27,26 @@
 
         <activity
             android:name=".activities.RegisterActivity"
-            android:exported="false">
+            android:exported="true">
         </activity>
 
         <activity
             android:name=".activities.LoginActivity"
             android:exported="true">
+
         </activity>
 
         <!--//////////////////////////////////////////////////////////////////////////-->
+        <activity android:name=".activities.FavoriteWordActivity" />
+
         <activity
             android:name=".activities.DictionaryActivity"
-            android:exported="true"/>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!--//////////////////////////////////////////////////////////////////////////-->
         <activity android:name=".activities.CongratulationsActivity" />
         <!--//////////////////////////////////////////////////////////////////////////-->
