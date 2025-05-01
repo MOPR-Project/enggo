@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical">
+        <Button
+            android:id="@+id/buttonCloseChat"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_return_selector">
+        </Button>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewMessageBox"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="11">
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/editTextMessage"
+            android:layout_width="301dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:padding="12dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="Tin nhắn..."
+            android:textSize="14sp" />
+        <Button
+            android:id="@+id/buttonSendMessage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_send_message_selector">
+        </Button>
+    </LinearLayout>
+</LinearLayout>
