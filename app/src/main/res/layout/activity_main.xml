@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/forgotPasswordLayout"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
@@ -55,11 +55,16 @@
         </ImageView>
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="6.5">
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </LinearLayout>
+    </FrameLayout>
 
     <View
         android:layout_width="match_parent"

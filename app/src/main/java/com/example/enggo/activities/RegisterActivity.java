@@ -31,6 +31,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.enggo.MainActivity;
 import com.example.enggo.R;
 import com.example.enggo.data.ApiResponse;
 import com.example.enggo.data.RegisterRequest;
@@ -76,6 +77,8 @@ public class RegisterActivity extends AppCompatActivity {
         mapping();
         setupTextViewLogin();
         setupTextViewTermsAndPrivacy();
+        setUpButtonRegister();
+        setUpButtonSendOtp();
     }
 
     @Override
@@ -143,8 +146,6 @@ public class RegisterActivity extends AppCompatActivity {
         textViewLogin.setText(spannable);
         textViewLogin.setMovementMethod(LinkMovementMethod.getInstance());
         textViewLogin.setHighlightColor(Color.TRANSPARENT);
-        setUpButtonRegister();
-        setUpButtonSendOtp();
     }
 
     private void setupTextViewTermsAndPrivacy()
@@ -213,7 +214,7 @@ public class RegisterActivity extends AppCompatActivity {
             else if (TextUtils.isEmpty(password)) {
                 editTextPassword.setError("Chưa nhập mật khẩu!");
             }
-            else if (password.length() < 6) {
+            else if (password.length() < 8) {
                 editTextPassword.setError("Mật khẩu phải có ít nhất 8 ký tự!");
             }
             else if (!password.equals(rePassword)) {
@@ -228,11 +229,9 @@ public class RegisterActivity extends AppCompatActivity {
             else if (editTextOtp.getVisibility() != View.VISIBLE)
             {
                 editTextUsername.setEnabled(false);
+                editTextPassword.setEnabled(false);
                 editTextRePassword.setEnabled(false);
                 editTextEmail.setEnabled(false);
-                editTextPassword.setEnabled(false);
-                editTextOtp.setVisibility(View.VISIBLE);
-                buttonSendOtp.setVisibility(View.VISIBLE);
 
                 RegisterRequest registerRequest = new RegisterRequest(username, password, email);
                 Call<ApiResponse> call = userApiService.registerUser(registerRequest);
@@ -241,6 +240,8 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                         if (response.isSuccessful()) {
                             Toast.makeText(RegisterActivity.this, "Đăng ký thành công. Otp đã gửi đến Email của bạn.", Toast.LENGTH_SHORT).show();
+                            editTextOtp.setVisibility(View.VISIBLE);
+                            buttonSendOtp.setVisibility(View.VISIBLE);
                         } else {
                             String errorMessage = "Đăng ký thất bại!";
                             try {
@@ -252,8 +253,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            // Hiển thị thông báo lỗi cho người dùng
                             Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                            editTextUsername.setEnabled(true);
+                            editTextPassword.setEnabled(true);
+                            editTextRePassword.setEnabled(true);
+                            editTextEmail.setEnabled(true);
                         }
                     }
 
@@ -261,7 +265,10 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ApiResponse> call, Throwable t) {
                         Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e("LoginError", "Đăng ký thất bại: " + t.getMessage());
+                        editTextUsername.setEnabled(true);
+                        editTextPassword.setEnabled(true);
+                        editTextRePassword.setEnabled(true);
+                        editTextEmail.setEnabled(true);
                     }
                 });
             }
@@ -280,12 +287,13 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                             if (response.isSuccessful()) {
                                 Toast.makeText(RegisterActivity.this, "Đăng ký thành công.", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                             } else {
                                 String errorMessage = "Đăng ký thất bại!";
                                 try {
                                     if (response.errorBody() != null) {
                                         JSONObject errorObj = new JSONObject(response.errorBody().string());
-                                        errorMessage = "Đăng ký thất bại: " + errorObj.optString("message", errorMessage);
+                                        errorMessage = "Đăng ký thất bại! " + errorObj.optString("message");
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -294,7 +302,6 @@ public class RegisterActivity extends AppCompatActivity {
                                 Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         }
-
 
                         @Override
                         public void onFailure(Call<ApiResponse> call, Throwable t) {
@@ -331,7 +338,7 @@ public class RegisterActivity extends AppCompatActivity {
                         try {
                             if (response.errorBody() != null) {
                                 JSONObject errorObj = new JSONObject(response.errorBody().string());
-                                errorMessage = "Lỗi gửi OTP: " + errorObj.optString("message", errorMessage);
+                                errorMessage = "Lỗi gửi OTP! " + errorObj.optString("message");
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
