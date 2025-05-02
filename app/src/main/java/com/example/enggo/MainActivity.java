@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MessageAdapter messageAdapter;
     private List<Message> messageList = new ArrayList<>();
+    private View blockerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,16 +96,13 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Thêm tin nhắn người dùng
             Message userMessage = new Message(message, Message.TYPE_USER);
             messageList.add(userMessage);
             messageAdapter.notifyItemInserted(messageList.size() - 1);
             recyclerView.scrollToPosition(messageList.size() - 1);
 
-            // Xóa ô nhập
             editTextMessage.setText("");
 
-            // Tạo request gửi cho Gemini API
             List<ContentRequest.Part> parts = Collections.singletonList(new ContentRequest.Part(message));
             ContentRequest.Content content = new ContentRequest.Content(parts);
             ContentRequest request = new ContentRequest(Collections.singletonList(content));
@@ -115,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
                     if (response.isSuccessful() && response.body() != null) {
                         String reply = response.body().candidates.get(0).content.parts.get(0).text;
 
-                        // Thêm tin nhắn AI
                         Message aiMessage = new Message(reply, Message.TYPE_AI);
                         messageList.add(aiMessage);
                         messageAdapter.notifyItemInserted(messageList.size() - 1);
