@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">EngGo</string>
+    <string-array name="gender_options">
+        <item>Giới tính</item>
+        <item>Nam</item>
+        <item>Nữ</item>
+        <item>Khác</item>
+    </string-array>
 </resources>

@@ -32,10 +32,11 @@
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/coin">
+                android:src="@drawable/flame">
             </ImageView>
 
             <TextView
+                android:id="@+id/textViewStreak"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="x99"
@@ -78,6 +79,5 @@
         android:layout_weight="0.7"
         android:background="@color/white"
         app:labelVisibilityMode="unlabeled"
-        app:itemIconTint="#5A9DFA"
         app:menu="@menu/bottom_navigation_menu"/>
 </LinearLayout>

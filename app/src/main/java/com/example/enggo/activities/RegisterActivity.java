@@ -60,6 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button buttonSendOtp;
     private EditText editTextEmail;
     private UserApiService userApiService;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,17 @@ public class RegisterActivity extends AppCompatActivity {
         setupTextViewTermsAndPrivacy();
         setUpButtonRegister();
         setUpButtonSendOtp();
+        setUpAnonymous();
+    }
+
+    private void setUpAnonymous()
+    {
+        user = (User)getIntent().getSerializableExtra("user");
+        if (user != null)
+        {
+            setUpButtonUpgradeAnonymous();
+            setUpButtonSendOtpUpgrade();
+        }
     }
 
     @Override
@@ -116,6 +128,8 @@ public class RegisterActivity extends AppCompatActivity {
         buttonSendOtp = findViewById(R.id.buttonSendOtp);
         editTextEmail = findViewById(R.id.editTextEmail);
     }
+
+
 
     private void setupTextViewLogin()
     {
@@ -261,7 +275,6 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     }
 
-
                     @Override
                     public void onFailure(Call<ApiResponse> call, Throwable t) {
                         Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -354,5 +367,125 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private void setUpButtonUpgradeAnonymous() {
+        buttonRegister.setOnClickListener(v -> {
+            String username = editTextUsername.getText().toString().trim();
+            String password = editTextPassword.getText().toString().trim();
+            String rePassword = editTextRePassword.getText().toString().trim();
+            String email = editTextEmail.getText().toString().trim();
+            String otp = editTextOtp.getText().toString().trim();
+
+            if (TextUtils.isEmpty(username)) {
+                editTextUsername.setError("Chưa nhập tài khoản!");
+            } else if (username.length() < 8) {
+                editTextUsername.setError("Tài khoản phải có ít nhất 8 ký tự!");
+            } else if (TextUtils.isEmpty(password)) {
+                editTextPassword.setError("Chưa nhập mật khẩu!");
+            } else if (password.length() < 8) {
+                editTextPassword.setError("Mật khẩu phải có ít nhất 8 ký tự!");
+            } else if (!password.equals(rePassword)) {
+                editTextRePassword.setError("Mật khẩu nhập lại không khớp!");
+            } else if (TextUtils.isEmpty(email)) {
+                editTextEmail.setError("Chưa nhập Email!");
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                editTextEmail.setError("Email không đúng định dạng!");
+            } else if (editTextOtp.getVisibility() != View.VISIBLE) {
+                Call<ApiResponse> call = userApiService.upgradeAnonymous(
+                        user.getUsername(),
+                        user.getPassword(),
+                        email
+                );
+                Log.d("RegisterActivity", "upgradeAnonymous params -> username: "
+                        + user.getUsername() + ", password: " + user.getPassword()
+                        + ", newEmail: " + email);
+
+                call.enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this, "OTP đã gửi đến email. Vui lòng kiểm tra.", Toast.LENGTH_SHORT).show();
+                            editTextOtp.setVisibility(View.VISIBLE);
+                            buttonSendOtp.setVisibility(View.VISIBLE);
+                            editTextUsername.setEnabled(false);
+                            editTextPassword.setEnabled(false);
+                            editTextRePassword.setEnabled(false);
+                            editTextEmail.setEnabled(false);
+                        } else {
+                            showErrorFromResponse(response, "Nâng cấp thất bại!");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse> call, Throwable t) {
+                        Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Call<ApiResponse> call = userApiService.verifyUpgradeAnonymous(
+                        user.getUsername(),
+                        user.getPassword(),
+                        username,
+                        password,
+                        email,
+                        otp
+                );
+
+                call.enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(RegisterActivity.this, "Nâng cấp thành công.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        } else {
+                            showErrorFromResponse(response, "Xác minh OTP thất bại!");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse> call, Throwable t) {
+                        Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    private void setUpButtonSendOtpUpgrade() {
+        buttonSendOtp.setOnClickListener(v -> {
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("email", editTextEmail.getText().toString().trim());
+
+            userApiService.sendOtp(requestBody).enqueue(new Callback<Map<String, Object>>() {
+                @Override
+                public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                    if (response.isSuccessful() && response.body() != null &&
+                            "success".equals(response.body().get("status"))) {
+                        Toast.makeText(RegisterActivity.this, "OTP đã gửi thành công.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Gửi OTP thất bại!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                    Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+    }
+
+    private void showErrorFromResponse(Response<?> response, String defaultMsg) {
+        String errorMessage = defaultMsg;
+        try {
+            if (response.errorBody() != null) {
+                JSONObject errorObj = new JSONObject(response.errorBody().string());
+                errorMessage = errorObj.optString("message", defaultMsg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 }
