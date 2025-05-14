@@ -42,10 +42,6 @@
 
         <activity android:name=".activities.FlashCardActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity android:name=".activities.FavoriteWordActivity" />
@@ -53,18 +49,19 @@
         <activity
             android:name=".activities.DictionaryActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
         </activity>
 
         <!--//////////////////////////////////////////////////////////////////////////-->
         <activity android:name=".activities.CongratulationsActivity" />
         <!--//////////////////////////////////////////////////////////////////////////-->
         <activity
+            android:name=".activities.SentenceLevelActivity"
+            android:exported="true">
+        </activity>
+        <!--//////////////////////////////////////////////////////////////////////////-->
+        <activity
             android:name=".activities.SentenceBuilderActivity"
-            android:exported="false">
+            android:exported="true">
         </activity>
         <!--//////////////////////////////////////////////////////////////////////////-->
         <activity android:name=".activities.WordDetailActivity" />

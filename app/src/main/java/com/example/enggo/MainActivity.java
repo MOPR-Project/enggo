@@ -18,7 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.enggo.activities.DictionaryActivity;
+import com.example.enggo.activities.FlashCardActivity;
 import com.example.enggo.activities.LoginActivity;
+import com.example.enggo.activities.SentenceLevelActivity;
 import com.example.enggo.adapters.MessageAdapter;
 import com.example.enggo.data.ContentRequest;
 import com.example.enggo.data.ContentResponse;
@@ -52,20 +55,33 @@ public class MainActivity extends AppCompatActivity {
     private List<Message> messageList = new ArrayList<>();
     private View blockerView;
 
+    private View navigationView;
+    private LinearLayout navSentenceBuilder, navDictionary, navFlashcard;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-
         chatbotApiService = ChatbotRetrofitClient.getInstance().create(ChatbotApiService.class);
-
         mapping();
         setUpChatbot();
+
+
+
+
+
+
+        rootLayout.addView(navigationView);
+        addNavigationLogic();
     }
 
     private void mapping() {
         rootLayout = findViewById(R.id.rootLayout);
+
+        navigationView = LayoutInflater.from(this).inflate(R.layout.layout_navigation, rootLayout, false);
+        navSentenceBuilder = navigationView.findViewById(R.id.navSentenceBuilder);
+        navDictionary = navigationView.findViewById(R.id.navDictionary);
+        navFlashcard = navigationView.findViewById(R.id.navFlashcard);
     }
 
     private void setUpChatbot() {
@@ -195,5 +211,22 @@ public class MainActivity extends AppCompatActivity {
             View child = rootLayout.getChildAt(i);
             child.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void addNavigationLogic() {
+        navSentenceBuilder.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SentenceLevelActivity.class);
+            startActivity(intent);
+        });
+
+        navDictionary.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DictionaryActivity.class);
+            startActivity(intent);
+        });
+
+        navFlashcard.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, FlashCardActivity.class);
+            startActivity(intent);
+        });
     }
 }
