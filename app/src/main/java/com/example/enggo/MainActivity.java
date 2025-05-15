@@ -30,6 +30,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -173,6 +174,11 @@ public class MainActivity extends AppCompatActivity {
         profileItem = bottomNavigationView.getMenu().findItem(R.id.profile);
 
         profileView = LayoutInflater.from(this).inflate(R.layout.profile_layout, rootLayout, false);
+        navigationView = LayoutInflater.from(this).inflate(R.layout.layout_navigation, rootLayout, false);
+
+        navSentenceBuilder = navigationView.findViewById(R.id.navSentenceBuilder);
+        navDictionary = navigationView.findViewById(R.id.navDictionary);
+        navFlashcard = navigationView.findViewById(R.id.navFlashcard);
 
         editTextUsername = profileView.findViewById(R.id.editTextUsername);
         editEmail = profileView.findViewById(R.id.editEmail);
@@ -696,4 +702,3 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-

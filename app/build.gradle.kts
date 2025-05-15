@@ -55,6 +55,6 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.glide)
-    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.5")
-    implementation ("com.google.android.gms:play-services-auth:21.0.0")
+    implementation (libs.threetenabp)
+    implementation (libs.play.services.auth)
 }
