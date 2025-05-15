@@ -1,7 +1,9 @@
 package com.example.enggo.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -25,6 +27,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -34,11 +38,18 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.enggo.MainActivity;
 import com.example.enggo.R;
 import com.example.enggo.data.ApiResponse;
+import com.example.enggo.data.LoginResponse;
 import com.example.enggo.data.RegisterRequest;
 import com.example.enggo.data.VerifyRegisterRequest;
 import com.example.enggo.helpers.RetrofitClient;
 import com.example.enggo.models.User;
 import com.example.enggo.service.UserApiService;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 
 import org.json.JSONObject;
 
@@ -52,15 +63,18 @@ import retrofit2.Response;
 public class RegisterActivity extends AppCompatActivity {
     private TextView textViewLogin;
     private TextView textViewTermsAndPrivacy;
-    private Button buttonRegister;
+    private Button buttonRegister, buttonLoginWithGoogle;
     private EditText editTextUsername;
     private EditText editTextPassword;
     private EditText editTextRePassword;
     private EditText editTextOtp;
     private Button buttonSendOtp;
     private EditText editTextEmail;
+    private SharedPreferences sharedPreferences;
     private UserApiService userApiService;
     private User user;
+    private GoogleSignInClient googleSignInClient;
+    private ActivityResultLauncher<Intent> googleSignInLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         userApiService = RetrofitClient.getInstance().create(UserApiService.class);
+        sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
 
         mapping();
         setupTextViewLogin();
@@ -81,6 +96,106 @@ public class RegisterActivity extends AppCompatActivity {
         setUpButtonRegister();
         setUpButtonSendOtp();
         setUpAnonymous();
+        setUpGoogle();
+        setButtonLoginWithGoogle();
+    }
+
+    private void setUpGoogle()
+    {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("187794834711-fovk8v7b6s6fdf80shdssj975s5e1nqj.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        googleSignInLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Log.d("LoginActivity", "Launcher được gọi và kết quả OK");
+                        Intent data = result.getData();
+                        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                        try {
+                            GoogleSignInAccount account = task.getResult(ApiException.class);
+                            Log.d("LoginActivity", "Lấy được account: " + account.getEmail());
+                            String idToken = account.getIdToken();
+                            Log.d("LoginActivity", "Gửi token tới API: " + idToken);
+                            sendLoginWithGoogleApi(idToken);
+                        } catch (ApiException e) {
+                            Log.e("LoginActivity", "Google Sign-In thất bại, mã lỗi: " + e.getStatusCode(), e);
+                            Toast.makeText(this, "Google login failed: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.e("LoginActivity", "Google Sign-In bị hủy hoặc lỗi: resultCode = " + result.getResultCode());
+                    }
+                }
+        );
+    }
+
+    private void setButtonLoginWithGoogle()
+    {
+        buttonLoginWithGoogle.setOnClickListener(v -> {
+            googleSignInClient.signOut()
+                    .addOnCompleteListener(this, task -> {
+                        Intent signInIntent = googleSignInClient.getSignInIntent();
+                        googleSignInLauncher.launch(signInIntent);
+                    });
+        });
+    }
+
+    private void sendLoginWithGoogleApi(String idToken) {
+        Map<String, String> body = new HashMap<>();
+        body.put("idToken", idToken);
+
+        userApiService.loginWithGoogle(body).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegisterActivity.this, "Đăng nhập thành công.", Toast.LENGTH_SHORT).show();
+                    LoginResponse loginResponse = response.body();
+                    if (loginResponse != null && loginResponse.getUser() != null) {
+                        User user = loginResponse.getUser();
+
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("username", user.getUsername());
+                        editor.putString("password", user.getPassword());
+                        editor.apply();
+
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        intent.putExtra("user", user);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "Dữ liệu phản hồi không hợp lệ", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    String errorMessage = "Đăng nhập thất bại!";
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            JSONObject errorObj = new JSONObject(errorBody);
+                            errorMessage = "Đăng nhập thất bại! " + errorObj.optString("message");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.remove("username");
+                    editor.remove("password");
+                    editor.apply();
+
+                    Toast.makeText(RegisterActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Log.e("LoginActivity", "Lỗi kết nối: ", t);
+                Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setUpAnonymous()
@@ -127,6 +242,7 @@ public class RegisterActivity extends AppCompatActivity {
         buttonRegister = findViewById(R.id.buttonRegister);
         buttonSendOtp = findViewById(R.id.buttonSendOtp);
         editTextEmail = findViewById(R.id.editTextEmail);
+        buttonLoginWithGoogle = findViewById(R.id.buttonLoginWithGoogle);
     }
 
 

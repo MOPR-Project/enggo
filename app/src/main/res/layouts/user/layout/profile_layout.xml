@@ -51,7 +51,8 @@
             android:inputType="textEmailAddress"
             android:padding="12dp"
             android:textSize="14sp"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:textColorHint="@color/hint_text_color"/>
 
         <EditText
             android:id="@+id/editTextName"
@@ -76,6 +77,7 @@
             android:textSize="14sp"
             android:focusable="false"
             android:clickable="true"
+            android:textColorHint="@color/hint_text_color"
             android:drawableEnd="@drawable/ic_calendar"
             android:enabled="false"/>
 

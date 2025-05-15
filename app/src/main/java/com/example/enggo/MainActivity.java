@@ -129,10 +129,12 @@ public class MainActivity extends AppCompatActivity {
         user = (User)getIntent().getSerializableExtra("user");
 
         mapping();
+        addNavigationLogic();
         setUpChatbot();
         setUpNavigationBar();
-        setUpAnonymous();
         setUpTextViewStreak();
+        setUpProfile();
+        setUpAnonymous();
     }
     private void setUpTextViewStreak()
     {
@@ -147,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             buttonRegister = profileView.findViewById(R.id.buttonRegister);
             setUpButtonRegister();
             buttonRegister.setVisibility(View.VISIBLE);
+            imageViewAvatar.setEnabled(false);
         }
     }
 
@@ -157,14 +160,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("user", user);
             startActivity(intent);
         });
-
-        chatbotApiService = ChatbotRetrofitClient.getInstance().create(ChatbotApiService.class);
-        mapping();
-        setUpChatbot();
-
-
-        rootLayout.addView(navigationView);
-        addNavigationLogic();
     }
 
     private void mapping() {
@@ -200,11 +195,11 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.profile) {
                 removeAllViews();
                 safeAddView(profileView);
-                setUpProfile();
                 return true;
             }
             if (id == R.id.home) {
                 removeAllViews();
+                safeAddView(navigationView);
                 safeAddView(bubbleView);
                 return true;
             }
@@ -686,6 +681,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addNavigationLogic() {
+        safeAddView(navigationView);
         navSentenceBuilder.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SentenceLevelActivity.class);
             startActivity(intent);
