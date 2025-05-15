@@ -5,6 +5,7 @@ public class VerifyRegisterRequest {
     private String email;
     private String password;
     private String otpCode;
+
     public VerifyRegisterRequest(String username, String email, String password, String otpCode)
     {
         this.username = username;
