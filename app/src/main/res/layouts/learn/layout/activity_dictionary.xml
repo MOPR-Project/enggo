@@ -57,7 +57,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Tra từ Anh Việt Anh"
+                    android:hint="Tra từ Enggo"
                     android:background="@android:color/transparent"
                     android:textSize="16sp"
                     android:inputType="text" />
@@ -70,59 +70,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Icon Buttons -->
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="horizontal"-->
-<!--            android:gravity="center"-->
-<!--            android:layout_marginBottom="16dp">-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:gravity="center"-->
-<!--                android:layout_margin="8dp">-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="40dp"-->
-<!--                    android:layout_height="40dp"-->
-<!--                    android:src="@drawable/ic_translate_screen" />-->
-<!--                <TextView android:text="Dịch màn hình" android:textSize="12sp" />-->
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:gravity="center"-->
-<!--                android:layout_margin="8dp">-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="40dp"-->
-<!--                    android:layout_height="40dp"-->
-<!--                    android:src="@drawable/ic_camera" />-->
-<!--                <TextView android:text="Dịch máy ảnh" android:textSize="12sp" />-->
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:gravity="center"-->
-<!--                android:layout_margin="8dp">-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="40dp"-->
-<!--                    android:layout_height="40dp"-->
-<!--                    android:src="@drawable/ic_gallery" />-->
-<!--                <TextView android:text="Dịch hình ảnh" android:textSize="12sp" />-->
-<!--            </LinearLayout>-->
-<!--        </LinearLayout>-->
-
-        <!-- Feature Buttons -->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -130,51 +77,93 @@
             android:divider="?android:attr/dividerHorizontal"
             android:showDividers="middle">
 
-            <!-- 1 -->
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Feature 1"
-                android:padding="12dp"
-
-                android:gravity="start|center_vertical"
-                />
-
             <!-- 2 -->
-            <LinearLayout
-                android:layout_marginVertical="4dp"
+            <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:columnCount="2"
+                android:rowCount="2"
+                android:alignmentMode="alignMargins"
+                android:columnOrderPreserved="false"
+                android:useDefaultMargins="true"
+                android:layout_gravity="center">
 
-                <Button
+                <LinearLayout
                     android:id="@+id/btnFavorite"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Từ của bạn"
-                    android:drawableStart="@drawable/ic_star"
-                    android:padding="12dp" />
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_white"
+                    android:padding="12dp">
 
-                <Button
+                    <ImageView
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:src="@drawable/ic_level_beginer" />
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Từ của bạn"
+                        android:textSize="12sp"
+                        android:textColor="#495057"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/btnHistory"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Từ đã tra"
-                    android:drawableStart="@drawable/ic_history"
-                    android:padding="12dp" />
-            </LinearLayout>
+                    android:layout_columnWeight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_card_white"
+                    android:padding="12dp">
 
-            <!-- 3 -->
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Feature 2"
-                android:padding="12dp"
-                android:gravity="start|center_vertical"
-                />
+                    <ImageView
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:src="@drawable/ic_level_elementary" />
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Từ đã tra"
+                        android:textSize="12sp"
+                        android:textColor="#495057"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </GridLayout>
+<!--            <LinearLayout-->
+<!--                android:layout_marginVertical="4dp"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:weightSum="2">-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/btnFavorite"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Từ của bạn"-->
+<!--                    android:drawableStart="@drawable/ic_star"-->
+<!--                    android:padding="12dp" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/btnHistory"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Từ đã tra"-->
+<!--                    android:drawableStart="@drawable/ic_history"-->
+<!--                    android:padding="12dp" />-->
+<!--            </LinearLayout>-->
+
 
         </LinearLayout>
     </LinearLayout>

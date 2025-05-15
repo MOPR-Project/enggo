@@ -67,10 +67,6 @@ public class MainActivity extends AppCompatActivity {
         setUpChatbot();
 
 
-
-
-
-
         rootLayout.addView(navigationView);
         addNavigationLogic();
     }

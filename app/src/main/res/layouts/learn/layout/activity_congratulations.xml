@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imgCelebration"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
         android:src="@drawable/ic_congratulation"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +32,7 @@
         android:id="@+id/tvMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You’ve completed all the sentence challenges 🎉"
+        android:text="You’ve completed the sentence challenges 🎉"
         android:textSize="18sp"
         android:textColor="@color/black"
         android:gravity="center"

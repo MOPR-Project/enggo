@@ -55,6 +55,15 @@ public class WordStorageManager {
         Type type = new TypeToken<List<WordStorage>>() {}.getType();
         return gson.fromJson(json, type);
     }
+    public static boolean isWordFavorite(Context context, String word) {
+        List<WordStorage> list = getWordFavorite(context);
+        for (WordStorage w : list) {
+            if (w.getWord().equalsIgnoreCase(word)) {
+                return true;
+            }
+        }
+        return false;
+    }
     private static void saveWordFavorite(Context context, List<WordStorage> list) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_FAVORITE_NAME, Context.MODE_PRIVATE);
         prefs.edit().putString(KEY_FAVORITE, gson.toJson(list)).apply();
@@ -67,7 +76,6 @@ public class WordStorageManager {
                 break;
             }
         }
-
         saveWordFavorite(context, list);
     }
 

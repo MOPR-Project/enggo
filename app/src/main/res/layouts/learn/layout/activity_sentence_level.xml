@@ -75,7 +75,6 @@
         android:useDefaultMargins="true"
         android:layout_gravity="center">
 
-        <!-- Reading -->
         <LinearLayout
             android:id="@+id/beginnerCard"
             android:layout_width="0dp"

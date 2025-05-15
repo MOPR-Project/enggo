@@ -20,6 +20,7 @@ import com.example.enggo.data.ApiResponse;
 import com.example.enggo.data.SentenceResponse;
 import com.example.enggo.data.SentenceSubmitRequest;
 import com.example.enggo.helpers.RetrofitClient;
+import com.example.enggo.helpers.StatisticsStorageManager;
 import com.example.enggo.models.Sentence;
 import com.example.enggo.service.SentenceApiService;
 import com.google.android.flexbox.FlexboxLayout;
@@ -43,25 +44,30 @@ public class SentenceBuilderActivity extends AppCompatActivity {
     private List<String> selectedWords = new ArrayList<>();
     private SentenceApiService apiService;
     private ImageButton btnSubmit;
+    ImageButton btnViewAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sentence_builder);
-
-        flexboxWordContainer = findViewById(R.id.flexboxWordContainer);
-        selectedWordsLayout = findViewById(R.id.selectedWordsLayout);
-        btnSubmit = findViewById(R.id.btnSubmit);
-        progressBar = findViewById(R.id.progressBar);
+        Mapping();
 
         apiService = RetrofitClient.getInstance().create(SentenceApiService.class);
 
         int level = getIntent().getIntExtra("level", 1);
         fetchSentences(level);
-
-        btnSubmit.setOnClickListener(v -> submitSentence());
     }
+    private void Mapping() {
+        progressBar = findViewById(R.id.progressBar);
+        flexboxWordContainer = findViewById(R.id.flexboxWordContainer);
+        selectedWordsLayout = findViewById(R.id.selectedWordsLayout);
 
+        btnSubmit = findViewById(R.id.btnSubmit);
+        btnSubmit.setOnClickListener(v -> submitSentence());
+
+        btnViewAnswer = findViewById(R.id.btnViewAnswer);
+        btnViewAnswer.setOnClickListener(v -> showCorrectAnswer());
+    }
 
     private void fetchSentences(int level) {
         apiService.getSentences(level).enqueue(new Callback<SentenceResponse>() {
@@ -84,7 +90,6 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             }
         });
     }
-
     private void showNextSentence() {
         if (currentIndex < sentenceList.size()) {
             Sentence currentSentence = sentenceList.get(currentIndex);
@@ -166,6 +171,20 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             selectedWordsLayout.addView(wordButton);
         }
     }
+    private void showCorrectAnswer() {
+        if (currentIndex >= sentenceList.size()) return;
+
+        Sentence currentSentence = sentenceList.get(currentIndex);
+        List<String> correctWords = currentSentence.getWords();
+
+        selectedWords.clear();
+        selectedWords.addAll(correctWords);
+        wordList.clear();
+
+        updateSelectedWordsUI();
+        flexboxWordContainer.removeAllViews();
+    }
+
     private void submitSentence() {
         if (currentIndex >= sentenceList.size()) return;
 
@@ -191,11 +210,12 @@ public class SentenceBuilderActivity extends AppCompatActivity {
                 }
             });
 
+            StatisticsStorageManager.incrementCompletedCount(this);
             currentIndex++;
             selectedWords.clear();
             showNextSentence();
         } else {
-            Toast.makeText(this, "❌ Incorrect! Try again.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "❌ Incorrect! Let's try again.", Toast.LENGTH_SHORT).show();
         }
     }
 }

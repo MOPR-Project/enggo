@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,6 +23,7 @@ import com.example.enggo.service.WordApiService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,8 +32,8 @@ import retrofit2.Response;
 public class DictionaryActivity extends AppCompatActivity {
     private WordApiService wordApiService;
     private EditText edtSearch;
-    Button btnHistory;
-    Button btnFavorite;
+    LinearLayout btnHistory;
+    LinearLayout btnFavorite;
 
     private String displayWord;
     private String phonetic;
@@ -45,13 +47,16 @@ public class DictionaryActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dictionary);
 
+        Mapping();
+        wordApiService = WordRetrofitClient.getInstance().create(WordApiService.class);
+    }
+    private void Mapping()  {
         edtSearch = findViewById(R.id.edtSearch);
         btnHistory = findViewById(R.id.btnHistory);
         btnFavorite = findViewById(R.id.btnFavorite);
 
         btnHistory.setOnClickListener(v -> showHistoryDialog());
         btnFavorite.setOnClickListener(v -> showFavoriteWords());
-
 
         edtSearch.setOnEditorActionListener((v, actionId, event) -> {
             String word = v.getText().toString().trim();
@@ -60,11 +65,7 @@ public class DictionaryActivity extends AppCompatActivity {
             }
             return true;
         });
-
-        wordApiService = WordRetrofitClient.getInstance().create(WordApiService.class);
     }
-
-
     private void fetchWordData(String word) {
         Call<List<WordResponse>> call = wordApiService.getWord(word);
 
@@ -93,14 +94,6 @@ public class DictionaryActivity extends AppCompatActivity {
                     meaning = result.meanings.get(0);
                     //definition
                     Definition definition = meaning.definitions.get(0);
-
-
-                    // Gson gson = new Gson();
-                    // Log.d("DictionaryData", "Word: " + displayWord);
-                    // Log.d("DictionaryData", "Phonetic: " + phonetic);
-                    // Log.d("DictionaryData", "Meaning: " + gson.toJson(meaning));
-                    // Log.d("DictionaryData", "Definition: " + gson.toJson(definition));
-
 
                     // Shared Referrence
                     WordStorageManager.addWord(DictionaryActivity.this, displayWord);
@@ -147,52 +140,10 @@ public class DictionaryActivity extends AppCompatActivity {
                 })
                 .show();
     }
-
     private void showFavoriteWords() {
         Intent intent = new Intent(DictionaryActivity.this, FavoriteWordActivity.class);
         startActivity(intent);
     }
 
-    private void showAllMeanings(String word, String phonetic, List<Meaning> meanings) {
-
-        StringBuilder message = new StringBuilder();
-        message.append("Từ: ").append(word).append("\n");
-        message.append("Phiên âm: ").append(phonetic).append("\n\n");
-
-        for (Meaning meaning : meanings) {
-            message.append("Loại từ: ").append(meaning.partOfSpeech).append("\n");
-
-            List<Definition> definitions = meaning.definitions;
-            int limit = Math.min(2, definitions.size());
-
-            for (int i = 0; i < limit; i++) {
-                Definition def = definitions.get(i);
-                message.append(" - Định nghĩa: ").append(def.definition).append("\n");
-                if (def.example != null && !def.example.isEmpty()) {
-                    message.append("   Ví dụ: ").append(def.example).append("\n");
-                }
-            }
-
-            message.append("\n");
-        }
-
-        new AlertDialog.Builder(this)
-                .setTitle("Kết quả tra từ")
-                .setMessage(message.toString())
-                .setPositiveButton("OK", null)
-                .show();
-
-        if (audioUrl != null) {
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            try {
-                mediaPlayer.setDataSource(audioUrl);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 }
 

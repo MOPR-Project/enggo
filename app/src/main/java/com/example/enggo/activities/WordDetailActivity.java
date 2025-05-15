@@ -1,5 +1,8 @@
 package com.example.enggo.activities;
 
+import static com.example.enggo.helpers.WordStorageManager.getWordFavorite;
+
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -36,11 +39,17 @@ public class WordDetailActivity extends AppCompatActivity {
     private ImageView btnPlayAudio, imgFavorite;
     private LinearLayout tagContainer, meaningsContainer;
 
+    private boolean isFavorite = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_word_detail);
 
+        Mapping();
+    }
+
+    private void Mapping() {
         tvWord = findViewById(R.id.tvWord);
         imgFavorite = findViewById(R.id.imgFavorite);
         tvPhonetic = findViewById(R.id.tvPhonetic);
@@ -48,7 +57,6 @@ public class WordDetailActivity extends AppCompatActivity {
         tagContainer = findViewById(R.id.tagContainer);
         meaningsContainer = findViewById(R.id.meaningsContainer);
 
-        // Fetch data from intent
         String word = getIntent().getStringExtra("word");
         String phonetic = getIntent().getStringExtra("phonetic");
         String audioUrl = getIntent().getStringExtra("audioUrl");
@@ -61,12 +69,21 @@ public class WordDetailActivity extends AppCompatActivity {
         renderMeanings(meanings);
 
         btnPlayAudio.setOnClickListener(v -> playAudio(audioUrl));
+
+        isFavorite = WordStorageManager.isWordFavorite(this, word);
+        updateFavoriteIcon();
         imgFavorite.setOnClickListener(v -> {
             WordStorage item = new WordStorage(word, phonetic);
-            WordStorageManager.addWordToFavorite(WordDetailActivity.this, item);
+            if (isFavorite) {
+                WordStorageManager.removeWordFromFavorite(this, word);
+                isFavorite = false;
+            } else {
+                WordStorageManager.addWordToFavorite(this, item);
+                isFavorite = true;
+            }
+            updateFavoriteIcon();
         });
     }
-
     private void renderTags(List<Meaning> meanings) {
         Set<String> partOfSpeechSet = new LinkedHashSet<>();
         for (Meaning meaning : meanings) {
@@ -88,11 +105,10 @@ public class WordDetailActivity extends AppCompatActivity {
             tagContainer.addView(tag);
         }
     }
-
     private void renderMeanings(List<Meaning> meanings) {
         meaningsContainer.removeAllViews();
         for (Meaning meaning : meanings) {
-            // Tiêu đề partOfSpeech
+
             TextView partOfSpeechView = new TextView(this);
             partOfSpeechView.setText(meaning.partOfSpeech);
             partOfSpeechView.setTextSize(18f);
@@ -101,7 +117,7 @@ public class WordDetailActivity extends AppCompatActivity {
             partOfSpeechView.setPadding(0, 16, 0, 8);
             meaningsContainer.addView(partOfSpeechView);
 
-            // Tối đa 2 định nghĩa
+
             List<Definition> definitions = meaning.definitions;
             for (int i = 0; i < Math.min(2, definitions.size()); i++) {
                 Definition def = definitions.get(i);
@@ -123,7 +139,6 @@ public class WordDetailActivity extends AppCompatActivity {
             }
         }
     }
-
     private void playAudio(String audioUrl) {
         if (audioUrl != null) {
             Log.d("Audio URL", "URL: " + audioUrl);
@@ -133,7 +148,7 @@ public class WordDetailActivity extends AppCompatActivity {
                 mediaPlayer.setOnPreparedListener(mp -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         PlaybackParams params = new PlaybackParams();
-                        params.setSpeed(0.75f); // 80% tốc độ bình thường
+                        params.setSpeed(0.75f);
                         mp.setPlaybackParams(params);
                     }
                     mp.start();
@@ -143,6 +158,13 @@ public class WordDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, "Không thể phát âm thanh", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
+        }
+    }
+    private void updateFavoriteIcon() {
+        if (isFavorite) {
+            imgFavorite.setImageResource(R.drawable.ic_star);
+        } else {
+            imgFavorite.setImageResource(R.drawable.ic_star_outline);
         }
     }
 

@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,10 +30,9 @@ public class FlashCardActivity extends AppCompatActivity {
 
     private LinearLayout flashCardRoot;
     private TextView tvTitle, tvPhonetic;
-    private Button btnContinue, btnCheck;
+    private ImageButton btnContinue, btnCheck;
     private List<WordStorage> favoriteWords;
     private int currentIndex = 0;
-
     private boolean isShowingVietnamese = false;
     private String originalWord = "";
     private String translatedMeaning = "";
@@ -59,7 +59,6 @@ public class FlashCardActivity extends AppCompatActivity {
         }
 
         showFlashcard(currentIndex);
-
 
         btnContinue.setOnClickListener(v -> {
             currentIndex++;
@@ -141,8 +140,8 @@ public class FlashCardActivity extends AppCompatActivity {
         flipOut.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                onMidFlip.run(); // Thực hiện thay đổi nội dung giữa hiệu ứng
-                flipIn.start();  // Tiếp tục quay phần còn lại
+                onMidFlip.run();
+                flipIn.start();
             }
         });
 
