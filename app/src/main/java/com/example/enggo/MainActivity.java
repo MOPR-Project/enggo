@@ -116,17 +116,17 @@ public class MainActivity extends AppCompatActivity {
 
     private View navigationView;
     private LinearLayout navSentenceBuilder, navDictionary, navFlashcard;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-
         sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         chatbotApiService = ChatbotRetrofitClient.getInstance().create(ChatbotApiService.class);
         userApiService = RetrofitClient.getInstance().create(UserApiService.class);
-        user = (User)getIntent().getSerializableExtra("user");
+        user = (User) getIntent().getSerializableExtra("user");
 
         mapping();
         addNavigationLogic();
@@ -136,13 +136,12 @@ public class MainActivity extends AppCompatActivity {
         setUpProfile();
         setUpAnonymous();
     }
-    private void setUpTextViewStreak()
-    {
+
+    private void setUpTextViewStreak() {
         textViewStreak.setText("x" + user.getStreak());
     }
 
-    private void setUpAnonymous()
-    {
+    private void setUpAnonymous() {
         if (user.getUsername().startsWith("anonymous")) {
             buttonEditProfile.setVisibility(View.GONE);
             buttonLogout.setVisibility(View.GONE);
@@ -153,8 +152,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setUpButtonRegister()
-    {
+    private void setUpButtonRegister() {
         buttonRegister.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
             intent.putExtra("user", user);
@@ -199,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (id == R.id.home) {
                 removeAllViews();
-                safeAddView(navigationView);
+                addNavigationLogic();
                 safeAddView(bubbleView);
                 return true;
             }
@@ -261,8 +259,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void logoutButton()
-    {
+    private void logoutButton() {
         buttonLogout.setOnClickListener(v -> {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove("username");
@@ -348,8 +345,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private  void setUpEditTextDateOfBirth()
-    {
+    private void setUpEditTextDateOfBirth() {
         editTextDateOfBirth.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
@@ -370,8 +366,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setUpSpinnerGender()
-    {
+    private void setUpSpinnerGender() {
         genderAdapter = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item,
                 getResources().getStringArray(R.array.gender_options)) {
@@ -397,8 +392,7 @@ public class MainActivity extends AppCompatActivity {
         spinnerGender.setAdapter(genderAdapter);
     }
 
-    private void loadUserProfile()
-    {
+    private void loadUserProfile() {
         String username = user.getUsername();
         String email = user.getEmail();
         String name = user.getName();
@@ -575,8 +569,7 @@ public class MainActivity extends AppCompatActivity {
         rootLayout.addView(view);
     }
 
-    private void loadAvatar()
-    {
+    private void loadAvatar() {
         String avatarBase64 = user.getAvatar();
         if (avatarBase64 != null && !avatarBase64.isEmpty()) {
             try {
@@ -682,6 +675,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addNavigationLogic() {
         safeAddView(navigationView);
+
         navSentenceBuilder.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SentenceLevelActivity.class);
             startActivity(intent);
