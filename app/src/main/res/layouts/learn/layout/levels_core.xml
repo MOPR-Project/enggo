@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutSentenceLevel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff"
+    android:padding="16dp"
+    tools:context=".SentenceLevelActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/tvLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_logo_box"
+            android:text="Sentence Builder"
+            android:textSize="24sp"
+            android:textColor="#FFFFFF"
+            android:padding="8dp"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Learned Words Box -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#e9ecef"
+        android:padding="32dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="left"
+        android:elevation="4dp"
+        android:layout_marginHorizontal="8dp">
+
+        <TextView
+            android:id="@+id/tvLearnedLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You've learned"
+            android:textColor="#888888"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvLearnedWords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="25 sentences 👏"
+            android:textSize="38sp"
+            android:textColor="#495057"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Feature Buttons Grid -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:alignmentMode="alignMargins"
+        android:columnOrderPreserved="false"
+        android:useDefaultMargins="true"
+        android:layout_gravity="center">
+
+        <!-- Reading -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_card_white"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_level_beginer" />
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BEGINNER"
+                android:textSize="12sp"
+                android:textColor="#495057"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Listening -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_card_white"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_level_elementary" />
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ELEMENTARY"
+                android:textSize="12sp"
+                android:textColor="#495057"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- Translate -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_card_white"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_level_intermediate" />
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INTERMEDIATE"
+                android:textSize="12sp"
+                android:textColor="#495057"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <!-- All-in-one -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_level_proficient" />
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PROFICIENT"
+                android:textSize="12sp"
+                android:textColor="#495057"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </GridLayout>
+</LinearLayout>

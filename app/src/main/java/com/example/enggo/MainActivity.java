@@ -40,8 +40,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.enggo.activities.DictionaryActivity;
+import com.example.enggo.activities.FlashCardActivity;
 import com.example.enggo.activities.LoginActivity;
 import com.example.enggo.activities.RegisterActivity;
+import com.example.enggo.activities.SentenceLevelActivity;
 import com.example.enggo.adapters.MessageAdapter;
 import com.example.enggo.data.ApiResponse;
 import com.example.enggo.data.ContentRequest;
@@ -110,11 +113,14 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textViewStreak;
 
+    private View navigationView;
+    private LinearLayout navSentenceBuilder, navDictionary, navFlashcard;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
 
         sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         chatbotApiService = ChatbotRetrofitClient.getInstance().create(ChatbotApiService.class);
@@ -150,10 +156,19 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("user", user);
             startActivity(intent);
         });
+
+        chatbotApiService = ChatbotRetrofitClient.getInstance().create(ChatbotApiService.class);
+        mapping();
+        setUpChatbot();
+
+
+        rootLayout.addView(navigationView);
+        addNavigationLogic();
     }
 
     private void mapping() {
         rootLayout = findViewById(R.id.rootLayout);
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         profileItem = bottomNavigationView.getMenu().findItem(R.id.profile);
 
@@ -408,6 +423,13 @@ public class MainActivity extends AppCompatActivity {
         editEmail.setText(email);
         editTextName.setText(name);
         editTextDateOfBirth.setText(dateOfBirth);
+
+
+        navigationView = LayoutInflater.from(this).inflate(R.layout.layout_navigation, rootLayout, false);
+        navSentenceBuilder = navigationView.findViewById(R.id.navSentenceBuilder);
+        navDictionary = navigationView.findViewById(R.id.navDictionary);
+        navFlashcard = navigationView.findViewById(R.id.navFlashcard);
+
     }
 
     private void setUpChatbot() {
@@ -654,6 +676,23 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        });
+    }
+
+    private void addNavigationLogic() {
+        navSentenceBuilder.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SentenceLevelActivity.class);
+            startActivity(intent);
+        });
+
+        navDictionary.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DictionaryActivity.class);
+            startActivity(intent);
+        });
+
+        navFlashcard.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, FlashCardActivity.class);
+            startActivity(intent);
         });
     }
 }

@@ -21,6 +21,7 @@ import com.example.enggo.R;
 import com.example.enggo.helpers.WordStorageManager;
 import com.example.enggo.models.Definition;
 import com.example.enggo.models.Meaning;
+import com.example.enggo.models.WordStorage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -60,7 +61,10 @@ public class WordDetailActivity extends AppCompatActivity {
         renderMeanings(meanings);
 
         btnPlayAudio.setOnClickListener(v -> playAudio(audioUrl));
-        imgFavorite.setOnClickListener(v -> WordStorageManager.addWordToFavorite(WordDetailActivity.this, word));
+        imgFavorite.setOnClickListener(v -> {
+            WordStorage item = new WordStorage(word, phonetic);
+            WordStorageManager.addWordToFavorite(WordDetailActivity.this, item);
+        });
     }
 
     private void renderTags(List<Meaning> meanings) {

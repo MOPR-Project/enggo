@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.enggo.R;
 import com.example.enggo.adapters.FavoriteWordAdapter;
 import com.example.enggo.helpers.WordStorageManager;
+import com.example.enggo.models.WordStorage;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class FavoriteWordActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private FavoriteWordAdapter adapter;
-    private List<String> favoriteWords;
+    private List<WordStorage> favoriteWords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +29,10 @@ public class FavoriteWordActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         favoriteWords = WordStorageManager.getWordFavorite(this);
-        Log.d("DictionaryData", "Word: " + favoriteWords);
+        Log.d("FavoriteData", "Favorite list: " + favoriteWords);
 
         adapter = new FavoriteWordAdapter(favoriteWords, this);
         recyclerView.setAdapter(adapter);
     }
 }
+

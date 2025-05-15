@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,10 +35,6 @@ import retrofit2.Response;
 public class SentenceBuilderActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FlexboxLayout flexboxWordContainer;
-    private RecyclerView recyclerViewWords;
-
-    private WordAdapter wordAdapter;
-
     private List<Sentence> sentenceList = new ArrayList<>();
     private int currentIndex = 0;
 
@@ -45,7 +42,7 @@ public class SentenceBuilderActivity extends AppCompatActivity {
     private FlexboxLayout selectedWordsLayout;
     private List<String> selectedWords = new ArrayList<>();
     private SentenceApiService apiService;
-    private ImageButton btnSubmit; // Nút Submit
+    private ImageButton btnSubmit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +54,14 @@ public class SentenceBuilderActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
         progressBar = findViewById(R.id.progressBar);
 
-
         apiService = RetrofitClient.getInstance().create(SentenceApiService.class);
 
-        fetchSentences(1);
+        int level = getIntent().getIntExtra("level", 1);
+        fetchSentences(level);
 
         btnSubmit.setOnClickListener(v -> submitSentence());
     }
+
 
     private void fetchSentences(int level) {
         apiService.getSentences(level).enqueue(new Callback<SentenceResponse>() {
@@ -107,20 +105,18 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             finish();
         }
     }
-
     private void setupFlexboxWords() {
         flexboxWordContainer.removeAllViews();
 
-        for (String word : wordList) {
-            if (selectedWords.contains(word)) continue;
+        for(int i = 0; i < wordList.size(); i++) {
+            String word = wordList.get(i);
 
             Button wordButton = new Button(this);
             wordButton.setText(word);
 
-            // Style
-            wordButton.setTextColor(Color.WHITE);
-            wordButton.setTextSize(16f);
-            wordButton.setPadding(24, 12, 24, 12);
+            wordButton.setTextColor(Color.parseColor("#343a40"));
+            wordButton.setTextSize(14f);
+            wordButton.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_word_select));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -131,6 +127,7 @@ public class SentenceBuilderActivity extends AppCompatActivity {
 
             wordButton.setOnClickListener(v -> {
                 selectedWords.add(word);
+                wordList.remove(word);
                 updateSelectedWordsUI();
                 setupFlexboxWords();
             });
@@ -138,14 +135,6 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             flexboxWordContainer.addView(wordButton);
         }
     }
-
-
-
-    private void onWordSelected(String word) {
-        selectedWords.add(word);
-        updateSelectedWordsUI();
-    }
-
     private void updateSelectedWordsUI() {
         selectedWordsLayout.removeAllViews();
 
@@ -153,26 +142,23 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             Button wordButton = new Button(this);
             wordButton.setText(word);
 
-            // Style button
-            wordButton.setTextSize(16);
-            wordButton.setTextColor(getResources().getColor(android.R.color.black));
-            wordButton.setBackgroundResource(R.drawable.word_button_bg); // custom drawable background
-            wordButton.setPadding(30, 16, 30, 16);
-
+            wordButton.setTextSize(14f);
+            wordButton.setTextColor(Color.parseColor("#343a40"));
+            wordButton.setBackground(ContextCompat.getDrawable(this, R.drawable.bg_word_select));
 
             wordButton.setAllCaps(false);
             wordButton.setElevation(0);
 
-            // Margin giữa các nút
             FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
                     FlexboxLayout.LayoutParams.WRAP_CONTENT,
                     FlexboxLayout.LayoutParams.WRAP_CONTENT
             );
-            params.setMargins(12, 16, 12, 16);
+            params.setMargins(4, 4, 4, 4);
             wordButton.setLayoutParams(params);
 
             wordButton.setOnClickListener(v -> {
                 selectedWords.remove(word);
+                wordList.add(word);
                 updateSelectedWordsUI();
                 setupFlexboxWords();
             });
@@ -180,8 +166,6 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             selectedWordsLayout.addView(wordButton);
         }
     }
-
-
     private void submitSentence() {
         if (currentIndex >= sentenceList.size()) return;
 
@@ -191,8 +175,6 @@ public class SentenceBuilderActivity extends AppCompatActivity {
             Toast.makeText(this, "Please select words", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // compare to correctWords
         List<String> correctWords = currentSentence.getWords();
         if (selectedWords.equals(correctWords)) {
             Toast.makeText(this, "✅ Correct!", Toast.LENGTH_SHORT).show();
