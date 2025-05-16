@@ -175,7 +175,7 @@ To clone this repo, you need Git installed on your machine, ofcourse !
 3. Run the following command:
 
    ```bash
-   [git clone https://github.com/Hiendang123a/Project_Web](https://github.com/MOPR-Project/enggo)
+   [git clone https://github.com/MOPR-Project](https://github.com/MOPR-Project)
    ```
 
 ### Open Project with Android Studio
@@ -188,14 +188,15 @@ To clone this repo, you need Git installed on your machine, ofcourse !
 
 
 ### Database Configuration
+You can import data from our database schema.
 
 ### Run Locally
 
-Simply click `Run` or `Ctrl + F5` to run the project. After deployment, IntelliJ will automatically open the browser and load localhost.
+Simply click `Run` to run the project. After complite, Android will automatically open the browser and load localhost.
 
 <details open>
 <summary>Click to see image</summary>    
 <pre>
-<img src = "./docs/7.png"><img>
+<img src = "https://res.cloudinary.com/dyhjtkde1/image/upload/v1747371963/Screenshot_2025-05-16_115741_nliyvj.png"><img>
 </pre>
 </details>
