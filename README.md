@@ -175,7 +175,7 @@ To clone this repo, you need Git installed on your machine, ofcourse !
 3. Run the following command:
 
    ```bash
-   [git clone https://github.com/MOPR-Project](https://github.com/MOPR-Project)
+   git clone https://github.com/MOPR-Project/enggo
    ```
 
 ### Open Project with Android Studio
